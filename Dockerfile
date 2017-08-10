@@ -43,7 +43,7 @@ RUN sed -i "s|VAR_PIO_HOME|${PIO_HOME}|" ${PIO_HOME}/vendors/hbase-${HBASE_VERSI
     && sed -i "s|VAR_HBASE_VERSION|${HBASE_VERSION}|" ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-site.xml    
 
 #RUN ${PIO_HOME}/sbt/sbt -batch -sbt-create
-RUN ${PIO_HOME}/sbt/sbt -batch
+#RUN ${PIO_HOME}/sbt/sbt -batch
 
 CMD ["/sbin/my_init"]
 
