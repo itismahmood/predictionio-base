@@ -45,8 +45,15 @@ COPY files/hbase-site.xml ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-
 RUN sed -i "s|VAR_PIO_HOME|${PIO_HOME}|" ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-site.xml \
     && sed -i "s|VAR_HBASE_VERSION|${HBASE_VERSION}|" ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-site.xml    
 
-RUN ${PIO_HOME}/sbt/sbt -batch -sbt-create
+#RUN ${PIO_HOME}/sbt/sbt -batch -sbt-create
 #RUN ${PIO_HOME}/sbt/sbt -batch
+RUN mkdir -p /pio/templates/ \
+    && cd /pio/templates/ \
+    && git clone https://github.com/apache/incubator-predictionio-template-recommender.git MyRecommendation \
+    && cd MyRecommendation \
+    && sed -i 's|INVALID_APP_NAME|MyApp1|' engine.json \
+    && sed -i 's|\"numIterations\"\: 20|"numIterations": 10|' engine.json \
+    ${PIO_HOME}/sbt/sbt -batch
 
 CMD ["/sbin/my_init"]
 
