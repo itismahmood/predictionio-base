@@ -2,7 +2,7 @@ FROM phusion/baseimage
 MAINTAINER Mahmood Aghapour <itismahmood@gmai.com>
 
 RUN apt-get update \
-    && apt-get install -y --auto-remove --no-install-recommends curl openjdk-8-jdk libgfortran3 python-pip \
+    && apt-get install -y --auto-remove --no-install-recommends curl openjdk-8-jdk libgfortran3 python-pip net-tools iputils-ping git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -21,7 +21,7 @@ ENV MYPIO_TAR=PredictionIO-${PIO_VERSION}-incubating.tar.gz
 #RUN mv /apache-predictionio-${PIO_VERSION}-incubating/PredictionIO-${PIO_VERSION}-incubating.tar.gz /
 #RUN tar zxvf PredictionIO-${PIO_VERSION}-incubating.tar.gz -C /
 #RUN rm -r /apache-predictionio-${PIO_VERSION}-incubating && 
-RUN curl -O https://github.com/itismahmood/predictionio-base/raw/master/files/${MYPIO_TAR}
+RUN curl -O -L https://github.com/itismahmood/predictionio-base/raw/master/files/${MYPIO_TAR}
 RUN tar zxvf ${MYPIO_TAR} -C /
 RUN rm ${MYPIO_TAR}
 RUN mkdir -p ${PIO_HOME}/vendors
