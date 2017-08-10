@@ -53,7 +53,7 @@ RUN mkdir -p /pio/templates/ \
     && cd MyRecommendation \
     && sed -i 's|INVALID_APP_NAME|MyApp1|' engine.json \
     && sed -i 's|\"numIterations\"\: 20|"numIterations": 10|' engine.json \
-    ${PIO_HOME}/sbt/sbt -batch
+    && ${PIO_HOME}/sbt/sbt -batch
 
 CMD ["/sbin/my_init"]
 
