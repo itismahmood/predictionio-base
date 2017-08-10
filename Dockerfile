@@ -17,10 +17,13 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 ENV MYPIO_TAR=PredictionIO-${PIO_VERSION}-incubating.tar.gz
 
-ADD files/${MYPIO_TAR} /
+#ADD files/${MYPIO_TAR} /
 #RUN mv /apache-predictionio-${PIO_VERSION}-incubating/PredictionIO-${PIO_VERSION}-incubating.tar.gz /
 #RUN tar zxvf PredictionIO-${PIO_VERSION}-incubating.tar.gz -C /
 #RUN rm -r /apache-predictionio-${PIO_VERSION}-incubating && 
+RUN curl -O https://github.com/itismahmood/predictionio-base/raw/master/files/${MYPIO_TAR}
+RUN tar zxvf ${MYPIO_TAR} -C /
+RUN rm ${MYPIO_TAR}
 RUN mkdir -p ${PIO_HOME}/vendors
 COPY files/pio-env.sh ${PIO_HOME}/conf/pio-env.sh
 
