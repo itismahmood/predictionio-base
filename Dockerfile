@@ -66,7 +66,7 @@ RUN cd "$ENGINE_HOME" \
 
 RUN cd "$ENGINE_HOME" \
     && git clone https://github.com/apache/incubator-predictionio-template-ecom-recommender.git MyECommerceRecommendation \
-    && cd MyECommerceRecommendatio \
+    && cd MyECommerceRecommendation \
     && sed -i 's|INVALID_APP_NAME|MyApp3|' engine.json \
     && sed -i 's|\"numIterations\" ?\: ?20|"numIterations" : 10|' engine.json
 
