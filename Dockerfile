@@ -2,7 +2,7 @@ FROM phusion/baseimage
 MAINTAINER Mahmood Aghapour <itismahmood@gmai.com>
 
 RUN apt-get update \
-    && apt-get install -y --auto-remove --no-install-recommends curl openjdk-8-jdk libgfortran3 python-pip net-tools iputils-ping git \
+    && apt-get install -y --auto-remove --no-install-recommends curl openjdk-8-jdk libgfortran3 python-pip net-tools iputils-ping git binutils \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -16,6 +16,9 @@ ENV PATH=${PIO_HOME}/bin:$PATH
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 ENV MYPIO_TAR=PredictionIO-${PIO_VERSION}-incubating.tar.gz
+ENV ENGINE_HOME /opt/engine
+
+RUN mkdir -p $ENGINE_HOME
 
 #ADD files/${MYPIO_TAR} /
 #RUN mv /apache-predictionio-${PIO_VERSION}-incubating/PredictionIO-${PIO_VERSION}-incubating.tar.gz /
@@ -26,6 +29,10 @@ RUN tar zxvf ${MYPIO_TAR} -C /
 RUN rm ${MYPIO_TAR}
 RUN mkdir -p ${PIO_HOME}/vendors
 COPY files/pio-env.sh ${PIO_HOME}/conf/pio-env.sh
+
+RUN pip install --upgrade pip \
+    && pip install setuptools \
+    && pip install predictionio
 
 RUN curl -O http://d3kbcqa49mib13.cloudfront.net/spark-${SPARK_VERSION}-bin-hadoop2.6.tgz \
     && tar -xvzf spark-${SPARK_VERSION}-bin-hadoop2.6.tgz -C ${PIO_HOME}/vendors \
@@ -45,15 +52,23 @@ COPY files/hbase-site.xml ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-
 RUN sed -i "s|VAR_PIO_HOME|${PIO_HOME}|" ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-site.xml \
     && sed -i "s|VAR_HBASE_VERSION|${HBASE_VERSION}|" ${PIO_HOME}/vendors/hbase-${HBASE_VERSION}/conf/hbase-site.xml    
 
-#RUN ${PIO_HOME}/sbt/sbt -batch -sbt-create
-#RUN ${PIO_HOME}/sbt/sbt -batch
-RUN mkdir -p /pio/templates/ \
-    && cd /pio/templates/ \
+RUN cd "$ENGINE_HOME" \
     && git clone https://github.com/apache/incubator-predictionio-template-recommender.git MyRecommendation \
     && cd MyRecommendation \
     && sed -i 's|INVALID_APP_NAME|MyApp1|' engine.json \
-    && sed -i 's|\"numIterations\"\: 20|"numIterations": 10|' engine.json \
-    && ${PIO_HOME}/sbt/sbt -batch
+    && sed -i 's|\"numIterations\" ?\: ?20|"numIterations" : 10|' engine.json
+
+RUN cd "$ENGINE_HOME" \
+    && git clone https://github.com/apache/incubator-predictionio-template-similar-product.git MySimilarProduct \
+    && cd MySimilarProduct \
+    && sed -i 's|INVALID_APP_NAME|MyApp2|' engine.json \
+    && sed -i 's|\"numIterations\" ?\: ?20|"numIterations" : 10|' engine.json
+
+RUN cd "$ENGINE_HOME" \
+    && git clone https://github.com/apache/incubator-predictionio-template-ecom-recommender.git MyECommerceRecommendation \
+    && cd MyECommerceRecommendatio \
+    && sed -i 's|INVALID_APP_NAME|MyApp3|' engine.json \
+    && sed -i 's|\"numIterations\" ?\: ?20|"numIterations" : 10|' engine.json
 
 CMD ["/sbin/my_init"]
 
@@ -61,12 +76,5 @@ RUN mkdir -p /etc/my_init.d
 ADD start-pio.sh /etc/my_init.d/start-pio.sh
 RUN chmod +x /etc/my_init.d/start-pio.sh
 
-RUN pip install --upgrade pip \
-    && pip install setuptools \
-    && pip install predictionio
-
-ENV ENGINE_HOME /opt/engine
-
-RUN mkdir -p $ENGINE_HOME
 VOLUME $ENGINE_HOME
 WORKDIR $ENGINE_HOME
