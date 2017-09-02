@@ -1,7 +1,7 @@
 version: "2"
 services:
   pio:
-    image: itismahmoodcommit/predictionio-base:latest
+    image: itismahmood/predictionio-base:latest
     volumes:
       - ~/.ivy2:/root/.ivy2
       - ~/.sbt:/root/.sbt

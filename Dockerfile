@@ -70,6 +70,11 @@ RUN cd "$ENGINE_HOME" \
     && sed -i 's|INVALID_APP_NAME|MyApp3|' engine.json \
     && sed -i 's|\"numIterations\" ?\: ?20|"numIterations" : 10|' engine.json
 
+RUN cd "$ENGINE_HOME" \
+    && git clone https://github.com/actionml/universal-recommender.git MyUniversalRecommender \
+    && cd MyUniversalRecommender \
+    && sed -i 's|0.13.0|0.14.0|' project/plugins.sbt
+
 CMD ["/sbin/my_init"]
 
 RUN mkdir -p /etc/my_init.d
